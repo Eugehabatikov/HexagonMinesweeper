@@ -9,7 +9,10 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
 import java.util.Timer;
-
+/**
+ * the class implements the minesweeper game in a version with hexagonal
+ * cells with the ability to adjust the number of mines and the size of the field
+ */
 class HexagonMinesweeper extends JFrame {
 
     private final int BLOCK_SIZE = 40; // size of one block
@@ -28,11 +31,11 @@ class HexagonMinesweeper extends JFrame {
         new HexagonMinesweeper();
     }
 
+
     private HexagonMinesweeper() {
         String TITLE_OF_PROGRAM = "Hexagon Minesweeper";
         setTitle(TITLE_OF_PROGRAM);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        // determined experimentally
         int FIELD_DX = 40;
         int FIELD_DY = 80;
         int START_LOCATION = 200;
@@ -60,17 +63,17 @@ class HexagonMinesweeper extends JFrame {
                     if(y1 - 1 > -1 && x1 < FIELD_SIZE && field[y1 - 1][x1].hexagon.contains(e.getX(), e.getY())){x = x1; y = y1 - 1;}
                 }
                 if (!bangMine && !youWon && x > -1 && y > -1) {
-                    if (e.getButton() == MOUSE_BUTTON_LEFT) // left button mouse
+                    if (e.getButton() == MOUSE_BUTTON_LEFT)
                         if (field[y][x].isNotOpen()) {
                             openCells(x, y);
-                            youWon = countOpenedCells == FIELD_SIZE*FIELD_SIZE - NUMBER_OF_MINES; // winning check
+                            youWon = countOpenedCells == FIELD_SIZE*FIELD_SIZE - NUMBER_OF_MINES;
                             if (bangMine) {
                                 bangX = x;
                                 bangY = y;
                             }
                         }
-                    if (e.getButton() == MOUSE_BUTTON_RIGHT) field[y][x].inverseFlag(); // right button mouse
-                    if (bangMine || youWon) timeLabel.stopTimer(); // game over
+                    if (e.getButton() == MOUSE_BUTTON_RIGHT) field[y][x].inverseFlag();
+                    if (bangMine || youWon) timeLabel.stopTimer();
                     canvas.repaint();
                 }
             }
@@ -81,24 +84,30 @@ class HexagonMinesweeper extends JFrame {
         initField();
     }
 
-    private void openCells(int x, int y) { // recursive procedure of opening the cells
-        if (x < 0 || x > FIELD_SIZE - 1 || y < 0 || y > FIELD_SIZE - 1) return; // wrong coordinates
-        if (!field[y][x].isNotOpen()) return; // cell is already open
+    /**
+     * recursive procedure of opening the cells
+     * @param x - cell side x
+     * @param y - cell side y
+     */
+    private void openCells(int x, int y) {
+        if (x < 0 || x > FIELD_SIZE - 1 || y < 0 || y > FIELD_SIZE - 1) return;
+        if (!field[y][x].isNotOpen()) return;
         field[y][x].open();
-        if (field[y][x].getCountBomb() > 0 || bangMine) return; // the cell is not empty
+        if (field[y][x].getCountBomb() > 0 || bangMine) return;
         for (int dx = -1; dx < 1; dx++)
             for (int dy = -1; dy < 2; dy++) openCells(x + dx + y % 2, y + dy);
         if(y % 2 == 0 && x + 1 < FIELD_SIZE) {openCells(x + 1, y);}
         if(y % 2 > 0 && x - 1 > -1){openCells(x - 1, y);}
     }
 
-    private void initField() { // initialization of the playing field
+    /**
+     * initialization of the playing field
+     */
+    private void initField() {
         int x, y, countMines = 0;
-        // create cells for the field
         for (x = 0; x < FIELD_SIZE; x++)
             for (y = 0; y < FIELD_SIZE; y++)
                 field[y][x] = new Cell(x, y);
-        // to mine field
         while (countMines < NUMBER_OF_MINES) {
             do {
                 x = random.nextInt(FIELD_SIZE);
@@ -107,7 +116,6 @@ class HexagonMinesweeper extends JFrame {
             field[y][x].mine();
             countMines++;
         }
-        // to count dangerous neighbors
         for (x = 0; x < FIELD_SIZE; x++)
             for (y = 0; y < FIELD_SIZE; y++)
                 if (!field[y][x].isMined()) {
@@ -128,7 +136,10 @@ class HexagonMinesweeper extends JFrame {
                 }
     }
 
-    class Cell { // playing field cell
+    /**
+     * the class creates a cell of the playing field
+     */
+    class Cell {
         private int countBombNear;
         private boolean isOpen, isMine, isFlag;
         private Polygon hexagon;
@@ -205,14 +216,12 @@ class HexagonMinesweeper extends JFrame {
 
         void paint(Graphics g, int x, int y) {
             g.setColor(Color.darkGray);
-            //g.drawRect(x*BLOCK_SIZE, y*(BLOCK_SIZE - BLOCK_SIZE/4), BLOCK_SIZE, BLOCK_SIZE);
             g.drawPolygon(hexagon);
 
             if (!isOpen) {
                 if ((bangMine || youWon) && isMine) paintBomb(g, x, y, Color.black);
                 else {
                     g.setColor(Color.lightGray);
-                    //g.fill3DRect(x*BLOCK_SIZE, y*(BLOCK_SIZE - BLOCK_SIZE/4), BLOCK_SIZE, BLOCK_SIZE, true);
                     g.fillPolygon(hexagon);
                     String SIGN_OF_FLAG = "f";
                     if (isFlag) paintString(g, SIGN_OF_FLAG, x, y, Color.red);
@@ -225,10 +234,13 @@ class HexagonMinesweeper extends JFrame {
         }
     }
 
-    class TimerLabel extends JLabel { // label with stopwatch
+    /**
+     * class realizes stopwatch
+     */
+    class TimerLabel extends JLabel {
         Timer timer = new Timer();
 
-        TimerLabel() { timer.scheduleAtFixedRate(timerTask, 0, 1000); } // TimerTask task, long delay, long period
+        TimerLabel() { timer.scheduleAtFixedRate(timerTask, 0, 1000); }
 
         TimerTask timerTask = new TimerTask() {
             volatile int time;
@@ -246,7 +258,11 @@ class HexagonMinesweeper extends JFrame {
         void stopTimer() { timer.cancel(); }
     }
 
-    class Canvas extends JPanel { // my canvas for painting
+    /**
+     * my class for painting
+     */
+
+    class Canvas extends JPanel {
         @Override
         public void paint(Graphics g) {
             super.paint(g);
