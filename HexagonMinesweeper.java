@@ -1,7 +1,7 @@
 /**
  * Java. Classic Game Minesweeper
  *
- * @author Sergey Iryupin
+ * @author Samuilov Evgenii
  * @version 0.3.2 dated September 23, 2016
  */
 import java.awt.*;
@@ -9,22 +9,32 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
 import java.util.Timer;
-/**
+/**                                                                                                           дописать
  * the class implements the minesweeper game in a version with hexagonal
  * cells with the ability to adjust the number of mines and the size of the field
+ @privatParam BLOCK_SIZE size of one block
+ @privatParam FIELD_SIZE in blocks
+ @privatParam MOUSE_BUTTON_LEFT for mouse listener
+ @privatParam MOUSE_BUTTON_RIGHT for mouse listener
+ @privatParam NUMBER_OF_MINES
+ @privatParam COLOR_OF_NUMBERS
+ @privatParam field
+ @privatParam random
+ @privatParam countOpenedCells count opened cell
+ @privatParam youWon, bangMine flags for win and bang/fail
  */
 class HexagonMinesweeper extends JFrame {
 
-    private final int BLOCK_SIZE = 40; // size of one block
-    private final int FIELD_SIZE = 9; // in blocks
-    private final int MOUSE_BUTTON_LEFT = 1; // for mouse listener
+    private final int BLOCK_SIZE = 40;
+    private final int FIELD_SIZE = 9;
+    private final int MOUSE_BUTTON_LEFT = 1;
     private final int MOUSE_BUTTON_RIGHT = 3;
     private final int NUMBER_OF_MINES = 10;
     private final int[] COLOR_OF_NUMBERS = {0x0000FF, 0x008000, 0xFF0000, 0x800000, 0x0};
     private Cell[][] field = new Cell[FIELD_SIZE][FIELD_SIZE];
     private Random random = new Random();
     private int countOpenedCells;
-    private boolean youWon, bangMine; // flags for win and bang/fail
+    private boolean youWon, bangMine;
     private int bangX, bangY; // for fix the coordinates of the explosion
 
     public static void main(String[] args) {
@@ -39,7 +49,8 @@ class HexagonMinesweeper extends JFrame {
         int FIELD_DX = 40;
         int FIELD_DY = 80;
         int START_LOCATION = 200;
-        setBounds(START_LOCATION, START_LOCATION, FIELD_SIZE * (BLOCK_SIZE + 2) + FIELD_DX, FIELD_SIZE * (BLOCK_SIZE / 4 * 3 + 2) + FIELD_DY);
+        setBounds(START_LOCATION, START_LOCATION, FIELD_SIZE * (BLOCK_SIZE + 2) + FIELD_DX, FIELD_SIZE *
+                (BLOCK_SIZE / 4 * 3 + 2) + FIELD_DY);
         setResizable(false);
         final TimerLabel timeLabel = new TimerLabel();
         timeLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -138,6 +149,9 @@ class HexagonMinesweeper extends JFrame {
 
     /**
      * the class creates a cell of the playing field
+     * @ countBombNear
+     * @ isOpen, isMine, isFlag
+     * @ hexagon
      */
     class Cell {
         private int countBombNear;
@@ -194,7 +208,8 @@ class HexagonMinesweeper extends JFrame {
             int ycenter = 2*y + y * BLOCK_SIZE / 4 * 3 + BLOCK_SIZE / 2;
             g.fillRect(xcenter - BLOCK_SIZE / 8, ycenter - BLOCK_SIZE / 4, BLOCK_SIZE / 4, BLOCK_SIZE / 2);
             g.fillRect(xcenter - BLOCK_SIZE / 4, ycenter - BLOCK_SIZE / 8, BLOCK_SIZE / 2, BLOCK_SIZE / 4);
-            g.fillRect(xcenter - BLOCK_SIZE / 8 - BLOCK_SIZE / 16, ycenter - BLOCK_SIZE / 8 - BLOCK_SIZE / 16, BLOCK_SIZE / 8 * 3, BLOCK_SIZE / 8 * 3);
+            g.fillRect(xcenter - BLOCK_SIZE / 8 - BLOCK_SIZE / 16, ycenter - BLOCK_SIZE / 8 - BLOCK_SIZE / 16,
+                    BLOCK_SIZE / 8 * 3, BLOCK_SIZE / 8 * 3);
             g.setColor(Color.white);
             g.fillRect(xcenter - BLOCK_SIZE / 16, ycenter - BLOCK_SIZE / 16, BLOCK_SIZE / 16, BLOCK_SIZE / 16);
         }
